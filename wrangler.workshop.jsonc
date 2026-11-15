@@ -1,0 +1,23 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "tarvis-workshop-chat-test",
+  "account_id": "d5b0680546c9d5c99ec7eb5e2cbdc4e9",
+  "main": "apps/worker/src/workshop/index.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["global_fetch_strictly_public", "nodejs_compat"],
+  "workers_dev": true,
+  "preview_urls": false,
+  "observability": { "enabled": true },
+  "vars": { "STORAGE_BACKEND": "do-sqlite", "TARVIS_CLOUD_URL": "https://cloud.tarvis.io" },
+  "durable_objects": { "bindings": [
+    { "name": "WORKSHOP_ROOMS", "class_name": "WorkshopRoom" },
+    { "name": "CHAT_ROOM", "class_name": "WorkshopRoom" },
+    { "name": "WORKSPACE", "class_name": "Workspace" },
+    { "name": "SEARCH_INDEX", "class_name": "SearchIndex" },
+    { "name": "PASSWORD_HASHER", "class_name": "PasswordHasher" },
+    { "name": "UNFURLER", "class_name": "Unfurler" },
+    { "name": "APP_CONNECTOR", "class_name": "AppConnector" },
+    { "name": "OUTSIDE_AI", "class_name": "OutsideAi" }
+  ] },
+  "migrations": [{ "tag": "tarvis-v1", "new_sqlite_classes": ["WorkshopRoom", "Workspace", "SearchIndex", "PasswordHasher", "Unfurler", "AppConnector", "OutsideAi"] }]
+}

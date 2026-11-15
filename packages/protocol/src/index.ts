@@ -2626,3 +2626,5 @@ export function parseServerFrame<Frame extends { type: string } = ServerFrame>(r
   const data = parseObject(raw);
   return typeof data?.type === "string" ? (data as Frame) : null;
 }
+
+export type { WorkshopState, WorkshopServerFrame } from "./workshop.ts";

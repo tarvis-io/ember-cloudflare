@@ -963,6 +963,16 @@ export class Workspace extends DurableObject<Env> {
   private readonly store: WorkspaceStore;
   private readonly outside: OutsideStore;
   private readonly sessions = new SessionCache<StoredSession>(CACHED_SESSIONS);
+  /** Internal RPC only: the isolated Tarvis entrypoint has verified Cloud membership. */
+  async registerWorkshopMember(roomId: string, name: string, user: User): Promise<void> {
+    const now = new Date().toISOString();
+    await this.db.batch([
+      { query: "INSERT INTO users (id, name, role, status, guest, created_at, updated_at) VALUES (?, ?, 0, 0, 0, ?, ?) ON CONFLICT(id) DO UPDATE SET name = excluded.name, updated_at = excluded.updated_at", params: [user.id, user.name, now, now] },
+      { query: "INSERT INTO rooms (id, kind, name, creator_id, created_at, updated_at) VALUES (?, 'closed', ?, ?, ?, ?) ON CONFLICT(id) DO NOTHING", params: [roomId, name, user.id, now, now] },
+      { query: "INSERT INTO memberships (room_id, user_id, created_at, updated_at) VALUES (?, ?, ?, ?) ON CONFLICT(room_id, user_id) DO NOTHING", params: [roomId, user.id, now, now] },
+    ]);
+  }
+
   /**
    * The account once it exists. Renaming it and regenerating its join code keep this current, and
    * nothing deletes it, so once read it needn't be read again.
